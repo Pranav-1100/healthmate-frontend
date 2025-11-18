@@ -53,6 +53,7 @@ const Sidebar = ({ isOpen }) => {
     { href: '/medications', icon: Pill, label: 'Medications' },
     { href: '/documents', icon: FileText, label: 'Documents' },
     { href: '/health', icon: ActivitySquare, label: 'Health Tracking' },
+    { href: '/notifications', icon: Bell, label: 'Notifications' },
     { href: '/profile', icon: User, label: 'Profile' },
     { href: '/settings', icon: Settings, label: 'Settings' },
   ];

@@ -1,15 +1,24 @@
 'use client';
 
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer, useEffect } from 'react';
 
 const AppContext = createContext();
+
+// Load theme from localStorage
+const getInitialTheme = () => {
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme || 'light';
+  }
+  return 'light';
+};
 
 const initialState = {
   user: null,
   notifications: [],
   currentChat: null,
   healthMetrics: null,
-  theme: 'light',
+  theme: 'light', // Will be updated on mount
 };
 
 function reducer(state, action) {
@@ -23,6 +32,16 @@ function reducer(state, action) {
     case 'SET_HEALTH_METRICS':
       return { ...state, healthMetrics: action.payload };
     case 'SET_THEME':
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('theme', action.payload);
+        // Apply to document
+        if (action.payload === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
       return { ...state, theme: action.payload };
     default:
       return state;
@@ -31,6 +50,12 @@ function reducer(state, action) {
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  // Load theme on mount
+  useEffect(() => {
+    const theme = getInitialTheme();
+    dispatch({ type: 'SET_THEME', payload: theme });
+  }, []);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
